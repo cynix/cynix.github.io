@@ -1,0 +1,32 @@
+<div class="navbar-blur">
+  <header class="navbar">
+    <section class="navbar-section">
+      <a class="navbar-brand" href="/">{{ site.title }}</a>
+
+      {% for item in site.data.links.menu %}
+        <a class="btn btn-link hide-sm" href="{{ item.link }}">{{ item.name }}</a>
+      {% endfor %}
+    </section>
+
+    <section class="navbar-section">
+      {% for item in site.data.links.social %}
+        <a class="btn btn-link tooltip tooltip-bottom hide-sm" href="{{ item.link }}" data-tooltip="{{ item.name }}">
+          <i class="fa-icon fa fa-{{ item.name | downcase }}"></i>
+        </a>
+      {% endfor %}
+
+      <div class="dropdown dropdown-right show-sm">
+        <button class="btn btn-action dropdown-toggle" tabindex="0"><i class="icon icon-menu"></i></button>
+        <ul class="menu">
+          {% for item in site.data.links.menu %}
+            <li class="menu-item"><a href="{{ item.link }}">{{ item.name }}</a></li>
+          {% endfor %}
+          <div class="divider"></div>
+          {% for item in site.data.links.social %}
+            <li class="menu-item"><a href="{{ item.link }}"><i class="fa-icon fa fa-{{ item.name | downcase }}" aria-hidden="true"></i> {{ item.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+  </header>
+</div>

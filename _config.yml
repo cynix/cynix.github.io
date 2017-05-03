@@ -1,0 +1,14 @@
+---
+title: cynix.org
+description: a mostly useless website
+author: cynix
+
+markdown: kramdown
+highlighter: rouge
+plugins:
+  - jekyll-minifier
+  - jekyll-paginate
+
+paginage: 5
+
+google_analytics: UA-67043-1

@@ -1,0 +1,7 @@
+menu:
+  - {name: 'scrypt', link: '/tools/scrypt'}
+
+social:
+  - {name: 'GitHub', link: 'https://github.com/cynix'}
+  - {name: 'Twitter', link: 'https://twitter.com/cynix'}
+  - {name: 'Instagram', link: 'https://instagram.com/cynix'}

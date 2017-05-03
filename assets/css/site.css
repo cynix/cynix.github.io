@@ -1,0 +1,53 @@
+#page {
+  max-width: 1000px;
+  min-height: 100vh;
+  width: 95vw;
+
+  position: relative;
+}
+
+#content {
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+#footer {
+  height: 1.8rem;
+
+  position: absolute;
+  bottom: 0;
+}
+
+.fa-icon {
+  height: 1em;
+  width: 1em;
+}
+
+.navbar-blur {
+  height: 3.6rem;
+
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+
+  z-index: 100;
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.navbar-blur .navbar {
+  height: 3.6rem;
+  max-width: 1000px;
+  width: 95vw;
+
+  margin: auto;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  margin-right: 1rem;
+}
