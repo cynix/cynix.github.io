@@ -16,7 +16,7 @@
       {% endfor %}
 
       <div class="dropdown dropdown-right show-sm">
-        <button class="btn btn-action dropdown-toggle" tabindex="0"><i class="icon icon-menu"></i></button>
+        <a class="btn btn-action dropdown-toggle" href="#" tabindex="0"><i class="icon icon-menu"></i></a>
         <ul class="menu">
           {% for item in site.data.links.menu %}
             <li class="menu-item"><a href="{{ item.link }}">{{ item.name }}</a></li>
