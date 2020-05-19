@@ -1,5 +1,5 @@
 menu:
-  - {name: 'scrypt', link: '/tools/scrypt'}
+  - {name: 'tools', link: '/tools'}
 
 social:
   - {name: 'GitHub', link: 'https://github.com/cynix'}
