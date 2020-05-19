@@ -1,0 +1,137 @@
+---
+title: rekey
+layout: page
+---
+
+<p>
+  Decrypts passwords using <a href="https://github.com/dchest/tweetnacl-js">TweetNaCl.js</a>.
+</p>
+
+<div class="columns">
+  <div class="column col-9 col-sm-12">
+    <form class="form-horizontal" id="rekey" name="rekey">
+      <div class="form-group">
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="rekey-base">Base</label></div>
+        <div class="column col-9 col-sm-12 input-group">
+          <input class="form-input" id="rekey-base" name="base" type="text" size="64" pattern="^[0-9a-z][0-9a-z-]*$" required>
+          <span class="input-group-addon">.firebaseio.com</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="rekey-src">Source</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="rekey-src" name="src" type="text" size="64" pattern="^[a-z][0-9a-z-]*$" required></div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="rekey-typ">Type</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="rekey-typ" name="typ" type="text" size="4" pattern="^[0-9a-z]+$" required></div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="rekey-key">Key</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input text-monospace" id="rekey-key" name="key" type="password" size="64" pattern="^[0-9A-Za-z+/=]+$" required></div>
+      </div>
+      <div class="form-group">
+        <div class="column col-3 col-sm-12"></div>
+        <div class="column col-9 col-sm-12"><button class="btn btn-primary" id="rekey-go">Decrypt</button></div>
+      </div>
+      <div class="form-group">
+        <div class="column col-9 col-sm-12 col-ml-auto" id="rekey-result"></div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+@media(max-width: 600px) {
+  .form-label.text-right {
+    text-align: left;
+  }
+}
+</style>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"
+  integrity="sha384-05+sicyRJQ56XpL4U9HJ8YbtSzFDvAg7apPKOGV6A0JsAJKFM68jp5oLnUjG5mEp"
+  crossorigin="anonymous">
+</script>
+<script
+  src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"
+  integrity="sha384-qpU3wxGxaAPcz02pOLeZTv5B0rNzsh3CETsUqdHxRBP70bO0kHoBopr+f9AcGj04"
+  crossorigin="anonymous">
+</script>
+<script
+  src="https://cdn.jsdelivr.net/npm/tweetnacl-sealedbox-js@1.2.0/sealedbox.web.js"
+  integrity="sha384-gCr/Ers2SYUTIvvm+iWV5lakrZ/tTqxgYQckm0Znr3blQzNfOPirDZlpvkINLyhv"
+  crossorigin="anonymous">
+</script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/js-sha1/0.6.0/sha1.min.js"
+  integrity="sha384-8X2wYcGqO5EMPizp7TyzRYJPykpXyo8sP3XCw3ufUZCg/+Jf08BvmK3590CPCA31"
+  crossorigin="anonymous">
+</script>
+<script
+  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"
+  integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+  crossorigin="anonymous">
+</script>
+
+<script>
+  (function() {
+    $('#rekey').submit(function(event) {
+      event.preventDefault();
+
+      var f = document.forms.rekey;
+      var go = document.querySelector('#rekey-go');
+      var result = $('#rekey-result');
+
+      $('.form-input').removeClass('is-error');
+      result.empty()
+
+      var sk = null;
+      try {
+        sk = nacl.util.decodeBase64(f.key.value);
+        pk = nacl.box.keyPair.fromSecretKey(sk).publicKey;
+      } catch (ex) {
+        $('#rekey-key').addClass('is-error');
+        return;
+      }
+
+      go.disabled = true;
+      go.classList.add('loading');
+
+      $.getJSON('https://' + f.base.value + '.firebaseio.com/src/' + sha1(f.src.value) + '/' + f.typ.value + '.json')
+        .done(function(json) {
+          if (!json) {
+            $('<p>No passwords found.</p>').appendTo(result);
+            return;
+          }
+
+          var keys = [];
+          $.each(json, function(k, v) { keys.push(k); });
+
+          keys.sort().reverse().forEach(function(k) {
+            var timestamp = (new Date(k * 1000)).toISOString();
+            timestamp = timestamp.substring(0, 10) + ' ' + timestamp.substring(11, 19);
+
+            var password = '';
+            try {
+              password = nacl.util.encodeUTF8(sealedBox.open(nacl.util.decodeBase64(json[k]), pk, sk));
+            } catch (ex) {
+              password = '?';
+            }
+
+            $('<div class="input-group">'
+              + '<input class="form-input text-monospace" type="text" value="' + password + '" size="64" readonly>'
+              + '<span class="input-group-addon">' + timestamp + '</span>'
+              + '</div>').appendTo(result);
+          });
+        })
+        .fail(function() {
+          $('<p>Failed to retrieve passwords.</p>').appendTo(result);
+        })
+        .always(function() {
+          go.classList.remove('loading');
+          go.disabled = false;
+        });
+    });
+  })();
+</script>
