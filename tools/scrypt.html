@@ -66,13 +66,13 @@ layout: page
 </script>
 
 <script>
-  var f = document.forms.scrypt;
-
   function updateN() {
-    document.querySelector('#scrypt-N').innerText = 'N = ' + Math.pow(2, f.logN.value);
+    document.querySelector('#scrypt-N').innerText =
+      'N = ' + Math.pow(2, document.forms.scrypt.logN.value);
   }
 
   function calculate() {
+    var f = document.forms.scrypt;
     var go = document.querySelector('#scrypt-go');
 
     f.result.value = '';
