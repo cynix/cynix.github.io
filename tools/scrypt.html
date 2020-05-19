@@ -11,41 +11,41 @@ layout: page
 
 <div class="columns">
   <div class="column col-9 col-sm-12">
-    <form class="form-horizontal">
+    <form class="form-horizontal" name="scrypt">
       <div class="form-group">
-        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="password">Password</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="password" name="password" type="password" size="64"></div>
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-password">Password</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-password" name="password" type="password" size="64"></div>
       </div>
       <div class="form-group">
-        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="salt">Salt</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="salt" name="salt" type="text" size="64"></div>
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-salt">Salt</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-salt" name="salt" type="text" size="64"></div>
       </div>
       <div class="form-group">
-        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="logN">logN</label></div>
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-logN">logN</label></div>
         <div class="column col-9 col-sm-12">
-          <input class="form-input" id="logN" name="logN" type="number" pattern="[1-9][0-9]*" value="17" size="4" oninput="updateN();">
-          <span class="form-input-hint" id="N"></span>
+          <input class="form-input" id="scrypt-logN" name="logN" type="number" pattern="[1-9][0-9]*" value="17" size="4" oninput="updateN();">
+          <span class="form-input-hint" id="scrypt-N"></span>
         </div>
       </div>
       <div class="form-group">
-        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="r">r</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="r" name="r" type="number" pattern="[1-9][0-9]*" value="8" size="4"></div>
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-r">r</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-r" name="r" type="number" pattern="[1-9][0-9]*" value="8" size="4"></div>
       </div>
       <div class="form-group">
-        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="p">p</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="p" name="p" type="number" pattern="[1-9][0-9]*" value="1" size="4"></div>
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-p">p</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-p" name="p" type="number" pattern="[1-9][0-9]*" value="1" size="4"></div>
       </div>
       <div class="form-group">
-        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="l">Key length</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="l" name="l" type="number" pattern="[1-9][0-9]*" value="32" size="4"></div>
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-dkLen">Key length</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-dkLen" name="dkLen" type="number" pattern="[1-9][0-9]*" value="32" size="4"></div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"></div>
-        <div class="column col-9 col-sm-12"><button class="btn btn-primary" id="go" type="button" onclick="calculate();">Calculate</button></div>
+        <div class="column col-9 col-sm-12"><button class="btn btn-primary" id="scrypt-go" type="button" onclick="calculate();">Calculate</button></div>
       </div>
       <div class="form-group">
-        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="result">Result</label></div>
-        <div class="column col-9 col-sm-12"><code class="form-input" id="result"></code></div>
+        <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-result">Result</label></div>
+        <div class="column col-9 col-sm-12"><input class="form-input text-monospace" id="scrypt-result" name="result" type="text" size="64" readonly></div>
       </div>
     </form>
   </div>
@@ -66,18 +66,18 @@ layout: page
 </script>
 
 <script>
-  var f = document.forms[0];
+  var f = document.forms.scrypt;
 
   function updateN() {
-    document.querySelector('#N').innerText = 'N = ' + Math.pow(2, f.logN.value);
+    document.querySelector('#scrypt-N').innerText = 'N = ' + Math.pow(2, f.logN.value);
   }
 
   function calculate() {
-    var button = document.querySelector('#go');
-    var result = document.querySelector('#result');
+    var go = document.querySelector('#scrypt-go');
 
-    button.disabled = true;
-    button.classList.add("loading");
+    f.result.value = '';
+    go.disabled = true;
+    go.classList.add("loading");
 
     window.setTimeout(function() {
       try {
@@ -85,18 +85,18 @@ layout: page
           logN: f.logN.value,
           r: f.r.value,
           p: f.p.value,
-          dkLen: f.l.value,
+          dkLen: f.dkLen.value,
           interruptStep: 1000,
           encoding: 'base64'
         }, function(res) {
-          result.innerText = res;
-          button.classList.remove("loading");
-          button.disabled = false;
+          f.result.value = res;
+          go.classList.remove("loading");
+          go.disabled = false;
         });
       } catch(ex) {
-        result.innerText = 'Error: ' + ex.message;
-        button.classList.remove("loading");
-        button.disabled = false;
+        f.result.value = 'Error: ' + ex.message;
+        go.classList.remove("loading");
+        go.disabled = false;
       }
     });
   }

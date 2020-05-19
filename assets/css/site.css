@@ -18,6 +18,10 @@
   bottom: 0;
 }
 
+.text-monospace {
+  font-family: "SF Mono", "Segoe UI Mono", "Roboto Mono", Menlo, Courier, monospace;
+}
+
 .fa-icon {
   height: 1em;
   width: 1em;
