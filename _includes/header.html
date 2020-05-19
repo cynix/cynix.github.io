@@ -1,7 +1,10 @@
 <div class="navbar-blur">
   <header class="navbar">
     <section class="navbar-section">
-      <a class="navbar-brand" href="/">{{ site.title }}</a>
+      <a class="navbar-brand" href="/">
+        <img class="avatar" src="/assets/img/avatar.png">
+        <h1 class="title">{{ site.title }}</h1>
+      </a>
 
       {% for item in site.data.links.menu %}
         <a class="btn btn-link hide-sm" href="{{ item.link }}">{{ item.name }}</a>

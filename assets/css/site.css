@@ -36,7 +36,6 @@
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
-
 .navbar-blur .navbar {
   height: 3.6rem;
   max-width: 1000px;
@@ -48,6 +47,14 @@
 }
 
 .navbar-brand {
-  font-weight: bold;
+  display: inline-flex;
   margin-right: 1rem;
+}
+.navbar-brand .avatar {
+  margin-right: 0.2rem;
+}
+.navbar-brand .title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: auto;
 }
