@@ -15,8 +15,8 @@
         </a>
       {% endfor %}
 
-      <div class="dropdown dropdown-right show-sm">
-        <a class="btn btn-action dropdown-toggle" href="#" tabindex="0"><i class="icon icon-menu"></i></a>
+      <div id="dropdown" class="dropdown dropdown-right show-sm">
+        <a id="dropdown-toggle" class="btn btn-action dropdown-toggle" href="#" tabindex="0"><i class="icon icon-menu"></i></a>
         <ul class="menu">
           {% for item in site.data.links.menu %}
             <li class="menu-item"><a href="{{ item.link }}">{{ item.name }}</a></li>
@@ -27,6 +27,13 @@
           {% endfor %}
         </ul>
       </div>
+      <script>
+        document.addEventListener('click', function(event) {
+          if (!document.querySelector('#dropdown').contains(event.target)) {
+            document.querySelector('#dropdown-toggle').blur();
+          }
+        });
+      </script>
     </section>
   </header>
 </div>
