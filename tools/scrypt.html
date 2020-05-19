@@ -11,37 +11,37 @@ layout: page
 
 <div class="columns">
   <div class="column col-9 col-sm-12">
-    <form class="form-horizontal" name="scrypt">
+    <form class="form-horizontal" id="scrypt" name="scrypt">
       <div class="form-group">
         <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-password">Password</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-password" name="password" type="password" size="64"></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-password" name="password" type="password" size="64" required></div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-salt">Salt</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-salt" name="salt" type="text" size="64"></div>
+        <div class="column col-9 col-sm-12"><input class="form-input text-monospace" id="scrypt-salt" name="salt" type="text" size="64" required></div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-logN">logN</label></div>
         <div class="column col-9 col-sm-12">
-          <input class="form-input" id="scrypt-logN" name="logN" type="number" pattern="[1-9][0-9]*" value="17" size="4" oninput="updateN();">
+          <input class="form-input" id="scrypt-logN" name="logN" type="number" pattern="^[1-9][0-9]{0,1}" value="17" min="1" max="32" required>
           <span class="form-input-hint" id="scrypt-N"></span>
         </div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-r">r</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-r" name="r" type="number" pattern="[1-9][0-9]*" value="8" size="4"></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-r" name="r" type="number" pattern="^[1-9][0-9]{0,2}$" value="8" min="1" max="128" required></div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-p">p</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-p" name="p" type="number" pattern="[1-9][0-9]*" value="1" size="4"></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-p" name="p" type="number" pattern="^[1-9][0-9]{0,1}$" value="1" min="1" max="32" required></div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-dkLen">Key length</label></div>
-        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-dkLen" name="dkLen" type="number" pattern="[1-9][0-9]*" value="32" size="4"></div>
+        <div class="column col-9 col-sm-12"><input class="form-input" id="scrypt-dkLen" name="dkLen" type="number" pattern="^[1-9][0-9]{0,2}$" value="32" min="8" max="128" required></div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"></div>
-        <div class="column col-9 col-sm-12"><button class="btn btn-primary" id="scrypt-go" type="button" onclick="calculate();">Calculate</button></div>
+        <div class="column col-9 col-sm-12"><button class="btn btn-primary" id="scrypt-go">Calculate</button></div>
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"><label class="form-label text-right" for="scrypt-result">Result</label></div>
@@ -66,40 +66,45 @@ layout: page
 </script>
 
 <script>
-  function updateN() {
-    document.querySelector('#scrypt-N').innerText =
-      'N = ' + Math.pow(2, document.forms.scrypt.logN.value);
-  }
+  (function() {
+    function updateN() {
+      document.querySelector('#scrypt-N').innerText =
+        'N = ' + Math.pow(2, document.forms.scrypt.logN.value);
+    }
+    document.querySelector('#scrypt-logN').oninput = updateN;
 
-  function calculate() {
-    var f = document.forms.scrypt;
-    var go = document.querySelector('#scrypt-go');
+    document.querySelector('#scrypt').onsubmit = function(event) {
+      event.preventDefault();
 
-    f.result.value = '';
-    go.disabled = true;
-    go.classList.add("loading");
+      var f = document.forms.scrypt;
+      var go = document.querySelector('#scrypt-go');
 
-    window.setTimeout(function() {
-      try {
-        scrypt(f.password.value, f.salt.value, {
-          logN: f.logN.value,
-          r: f.r.value,
-          p: f.p.value,
-          dkLen: f.dkLen.value,
-          interruptStep: 1000,
-          encoding: 'base64'
-        }, function(res) {
-          f.result.value = res;
+      f.result.value = '';
+      go.disabled = true;
+      go.classList.add("loading");
+
+      window.setTimeout(function() {
+        try {
+          scrypt(f.password.value, f.salt.value, {
+            logN: f.logN.value,
+            r: f.r.value,
+            p: f.p.value,
+            dkLen: f.dkLen.value,
+            interruptStep: 1000,
+            encoding: 'base64'
+          }, function(res) {
+            f.result.value = res;
+            go.classList.remove("loading");
+            go.disabled = false;
+          });
+        } catch(ex) {
+          f.result.value = 'Error: ' + ex.message;
           go.classList.remove("loading");
           go.disabled = false;
-        });
-      } catch(ex) {
-        f.result.value = 'Error: ' + ex.message;
-        go.classList.remove("loading");
-        go.disabled = false;
-      }
-    });
-  }
+        }
+      });
+    };
 
-  updateN();
+    updateN();
+  })();
 </script>
