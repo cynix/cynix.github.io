@@ -119,12 +119,11 @@ layout: page
               password = '?';
             }
 
-            var div = $('<div class="input-group">'
+            var div = $('<div class="input-group tooltip tooltip-left" data-tooltip="' + timestamp + '">'
               + '<input class="form-input text-monospace" type="text" value="' + password + '" size="64" readonly>'
-              + '<span class="input-group-addon hide-md">' + timestamp + '</span>'
               + '</div>');
-
             var btn = $('<button class="btn btn-action input-group-btn" type="button"><i class="icon icon-copy"></i></button>');
+
             btn.click(function() {
               btn.siblings('input').focus().select();
 
