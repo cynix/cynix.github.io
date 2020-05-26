@@ -31,7 +31,7 @@ layout: page
       </div>
       <div class="form-group">
         <div class="column col-3 col-sm-12"></div>
-        <div class="column col-9 col-sm-12"><button class="btn btn-primary" id="rekey-go">Decrypt</button></div>
+        <div class="column col-9 col-sm-12"><button class="btn btn-primary" id="rekey-go" type="submit">Decrypt</button></div>
       </div>
       <div class="form-group">
         <div class="column col-9 col-sm-12 col-ml-auto" id="rekey-result"></div>
@@ -84,7 +84,7 @@ layout: page
       var result = $('#rekey-result');
 
       $('.form-input').removeClass('is-error');
-      result.empty()
+      result.empty();
 
       var sk = null;
       try {
@@ -119,10 +119,23 @@ layout: page
               password = '?';
             }
 
-            $('<div class="input-group">'
+            var div = $('<div class="input-group">'
               + '<input class="form-input text-monospace" type="text" value="' + password + '" size="64" readonly>'
               + '<span class="input-group-addon hide-md">' + timestamp + '</span>'
-              + '</div>').appendTo(result);
+              + '</div>');
+
+            var btn = $('<button class="btn btn-action input-group-btn" type="button"><i class="icon icon-copy"></i></button>');
+            btn.click(function() {
+              btn.siblings('input').focus().select();
+
+              try {
+                document.execCommand('copy');
+              } catch (ex) {
+              }
+            });
+
+            btn.appendTo(div);
+            div.appendTo(result);
           });
         })
         .fail(function() {
