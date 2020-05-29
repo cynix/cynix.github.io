@@ -14,7 +14,7 @@
     <section class="navbar-section">
       {% for item in site.data.links.social %}
         <a class="btn btn-link tooltip tooltip-bottom hide-sm" href="{{ item.link }}" data-tooltip="{{ item.name }}">
-          <i class="fa-icon fa fa-{{ item.name | downcase }}"></i>
+          <i class="fa-icon fab fa-{{ item.name | downcase }}"></i>
         </a>
       {% endfor %}
 
@@ -26,7 +26,7 @@
           {% endfor %}
           <div class="divider"></div>
           {% for item in site.data.links.social %}
-            <li class="menu-item"><a href="{{ item.link }}"><i class="fa-icon fa fa-{{ item.name | downcase }}" aria-hidden="true"></i> {{ item.name }}</a></li>
+            <li class="menu-item"><a href="{{ item.link }}"><i class="fa-icon fab fa-{{ item.name | downcase }}" aria-hidden="true"></i> {{ item.name }}</a></li>
           {% endfor %}
         </ul>
       </div>
